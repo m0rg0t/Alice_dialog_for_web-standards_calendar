@@ -25,8 +25,7 @@ calendar.sort(sortByDateASC);
 const getEventText = (event) => {
     return `Название: ${event.summary}
     Город: ${event.location}
-    Дата: ${dayjs(event.start).locale('ru').format('DD/MM/YYYY')}
-    ${event.description}`
+    Дата: ${dayjs(event.start).locale('ru').format('DD/MM/YYYY')}`
 }
 
 app.use(function (req, res, next) {
@@ -57,10 +56,19 @@ alice.command(['ближайшее событие', 'ближайшее', 'со�
     const currentDate = new Date();
     const events = calendar.filter((event) => new Date(event.start) >= currentDate);
     let out = '';
+    let buttons = [];
     for (let i = 0; i < (EVENTS_COUNT > events.length ? events.length : EVENTS_COUNT); i++) {
-        out += getEventText(events[i]) + "\n\n";
+        const event = events[i];
+        out += getEventText(event) + "\n\n";
+        buttons.push(M.button({
+            title: event.summary,
+            url: event.description
+        }));
     }
-    return Reply.text(out);
+    return {
+        text: out,
+        buttons: buttons
+    }
 }
 );
 //alice.command(/(https?:\/\/[^\s]+)/g, ctx => Reply.text('Это ссылка!'));
