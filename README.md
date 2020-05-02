@@ -8,7 +8,8 @@ Alice.Dialog for webstandards events calendar
 
 Используемые инструменты:
 
-- https://github.com/fletcherist/yandex-dialogs-sdk
-- https://github.com/web-standards-ru/calendar
+- https://github.com/fletcherist/yandex-dialogs-sdk - для упрощения работы с "протоколом" Алисы
+- https://github.com/popstas/yandex-dialogs-client/ - средство для локального тестирования навыка
+- https://github.com/web-standards-ru/calendar - календарь веб-стандартов с событиями по фронтенду
 
 Распространяется по лицензии [CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.ru).
