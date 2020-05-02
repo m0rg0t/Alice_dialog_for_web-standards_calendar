@@ -1,31 +1,69 @@
+'use strict';
+
 //const { json } = require('micro');
 const { Alice, Reply, Markup } = require('yandex-dialogs-sdk');
 const Responses = require('./strings/strings.js');
-
+const dayjs = require('dayjs');
 const app = require('express')();
 const bodyParser = require('body-parser');
-
 const alice = new Alice();
+const EVENTS_COUNT = 4;
 const PORT = process.env.PORT || 3001;
 
-app.use(function(req, res, next) {
+const fs = require('fs');
+
+let rawdata = fs.readFileSync('./data/calendar.json');
+let calendar = JSON.parse(rawdata);
+
+/***** sort events by date ******/
+const sortByDateASC = (a, b) => {
+    return new Date(a.start) - new Date(b.start)
+};
+calendar.sort(sortByDateASC);
+/*******************************/
+
+const getEventText = (event) => {
+    return `Название: ${event.summary}
+    Город: ${event.location}
+    Дата: ${dayjs(event.start).locale('ru').format('DD/MM/YYYY')}
+    ${event.description}`
+}
+
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
-  });
+});
 
 const M = Markup;
 alice.command('', async ctx => {
-        return {
-            text: Responses.hello,
-            buttons: [M.button('Ближайшие события')]
-        }
+    return {
+        text: Responses.hello,
+        buttons: [M.button('Ближайшие события')]
     }
+}
+);
+alice.command(['В начало', 'меню'], async ctx => {
+    return {
+        text: Responses.hello,
+        buttons: [M.button('Ближайшие события')]
+    }
+}
 );
 alice.command(['Помощь', 'Что ты умеешь', 'Что умеешь'], async ctx =>
     Reply.text(Responses.help)
 );
-alice.command(/(https?:\/\/[^\s]+)/g, ctx => Reply.text('Это ссылка!'));
+alice.command(['ближайшее событие', 'ближайшее', 'события'], async ctx => {
+    const currentDate = new Date();
+    const events = calendar.filter((event) => new Date(event.start) >= currentDate);
+    let out = '';
+    for (let i = 0; i < (EVENTS_COUNT > events.length ? events.length : EVENTS_COUNT); i++) {
+        out += getEventText(events[i]) + "\n\n";
+    }
+    return Reply.text(out);
+}
+);
+//alice.command(/(https?:\/\/[^\s]+)/g, ctx => Reply.text('Это ссылка!'));
 alice.any(async ctx => Reply.text(Responses.dont_know));
 
 app.use(bodyParser.json());

@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/m0rg0t/Alice_dialog_for_web-standards_calendar#readme",
   "dependencies": {
+    "dayjs": "^1.8.26",
     "express": "^4.17.1",
     "micro": "^9.1.0",
     "yandex-dialogs-sdk": "^2.3.0"
