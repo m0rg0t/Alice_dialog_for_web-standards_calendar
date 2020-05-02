@@ -1,0 +1,25 @@
+{
+  "name": "alice_dialog_for_web-standards_calendar",
+  "version": "1.0.0",
+  "description": "Alice.Dialog for webstandards events calendar",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m0rg0t/Alice_dialog_for_web-standards_calendar.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/m0rg0t/Alice_dialog_for_web-standards_calendar/issues"
+  },
+  "homepage": "https://github.com/m0rg0t/Alice_dialog_for_web-standards_calendar#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "micro": "^9.1.0",
+    "yandex-dialogs-sdk": "^2.3.0"
+  }
+}
