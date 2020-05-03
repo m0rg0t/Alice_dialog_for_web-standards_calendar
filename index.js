@@ -4,6 +4,7 @@
 const { Alice, Reply, Markup } = require('yandex-dialogs-sdk');
 const Responses = require('./strings/strings.js');
 const dayjs = require('dayjs');
+require('dayjs/locale/ru');
 const app = require('express')();
 const bodyParser = require('body-parser');
 const alice = new Alice();
@@ -14,18 +15,33 @@ const fs = require('fs');
 
 let rawdata = fs.readFileSync('./data/calendar.json');
 let calendar = JSON.parse(rawdata);
+dayjs.locale('ru');
+const DateFormatString = 'DD MMMM YYYY года HH часов mm минут';
 
 /***** sort events by date ******/
 const sortByDateASC = (a, b) => {
     return new Date(a.start) - new Date(b.start)
 };
 calendar.sort(sortByDateASC);
+const eventNames = calendar.map(event => event.summary);
 /*******************************/
 
-const getEventText = (event) => {
-    return `Название: ${event.summary}
-    Город: ${event.location}
-    Дата: ${dayjs(event.start).locale('ru').format('DD/MM/YYYY')}`
+/**
+ * Get tring with event description
+ * @param {object} event event object
+ * @param {*} fullData output full data about object
+ */
+const getEventText = (event, fullData = false) => {
+    if (fullData) {
+        let eventText = `Название: ${event.summary}
+            Город: ${event.location}
+            Дата начала: ${dayjs(event.start).format(DateFormatString)}`;
+            event.end && (eventText += `Дата окончания: ${dayjs(event.end).format(DateFormatString)}`);
+    } else {
+        return `Название: ${event.summary}
+        Город: ${event.location}
+        Дата: ${dayjs(event.start).format(DateFormatString)}`
+    }
 }
 
 app.use(function (req, res, next) {
@@ -49,9 +65,13 @@ alice.command(['В начало', 'меню'], async ctx => {
     }
 }
 );
-alice.command(['Помощь', 'Что ты умеешь', 'Что умеешь'], async ctx =>
+alice.command(['Помощь', 'Что ты умеешь', 'Что умеешь', 'что ты умеешь?'], async ctx =>
     Reply.text(Responses.help)
 );
+alice.command(['Выход', 'покинуть', 'хватит', 'закрыть', 'выключить'], async ctx => {
+    сtx.leave();
+    return Reply.text(Responses.exit);
+});
 alice.command(['ближайшее событие', 'ближайшее', 'события'], async ctx => {
     const currentDate = new Date();
     const events = calendar.filter((event) => new Date(event.start) >= currentDate);
@@ -71,6 +91,14 @@ alice.command(['ближайшее событие', 'ближайшее', 'со�
     }
 }
 );
+alice.command(eventNames, ctx => {
+    const selectedEvent = calendar.find(event => event.name === ctx.message);
+    if (selectedEvent) {
+        Reply.text(getEventText(selectedEvent, true));
+    } else {
+        Reply.text(Responses.dont_know);
+    }
+})
 //alice.command(/(https?:\/\/[^\s]+)/g, ctx => Reply.text('Это ссылка!'));
 alice.any(async ctx => Reply.text(Responses.dont_know));
 
