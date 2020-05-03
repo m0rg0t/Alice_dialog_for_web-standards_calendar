@@ -23,7 +23,9 @@ const sortByDateASC = (a, b) => {
     return new Date(a.start) - new Date(b.start)
 };
 calendar.sort(sortByDateASC);
-const eventNames = calendar.map(event => event.summary);
+const currentDate = new Date();
+const futureCalendar = calendar.filter((event) => new Date(event.start) >= currentDate);
+const eventNames = futureCalendar.map(event => event.summary);
 /*******************************/
 
 /**
@@ -32,16 +34,13 @@ const eventNames = calendar.map(event => event.summary);
  * @param {*} fullData output full data about object
  */
 const getEventText = (event, fullData = false) => {
-    if (fullData) {
-        let eventText = `Название: ${event.summary}
+    let eventText = `Название: ${event.summary}
             Город: ${event.location}
             Дата начала: ${dayjs(event.start).format(DateFormatString)}`;
-            event.end && (eventText += `Дата окончания: ${dayjs(event.end).format(DateFormatString)}`);
-    } else {
-        return `Название: ${event.summary}
-        Город: ${event.location}
-        Дата: ${dayjs(event.start).format(DateFormatString)}`
+    if (fullData) {
+        event.end && (eventText += `\nДата окончания: ${dayjs(event.end).format(DateFormatString)}`);
     }
+    return eventText;
 }
 
 app.use(function (req, res, next) {
@@ -73,8 +72,7 @@ alice.command(['Выход', 'покинуть', 'хватит', 'закрыть
     return Reply.text(Responses.exit);
 });
 alice.command(['ближайшее событие', 'ближайшее', 'события'], async ctx => {
-    const currentDate = new Date();
-    const events = calendar.filter((event) => new Date(event.start) >= currentDate);
+    const events = futureCalendar;
     let out = '';
     let buttons = [];
     for (let i = 0; i < (EVENTS_COUNT > events.length ? events.length : EVENTS_COUNT); i++) {
@@ -92,11 +90,11 @@ alice.command(['ближайшее событие', 'ближайшее', 'со�
 }
 );
 alice.command(eventNames, ctx => {
-    const selectedEvent = calendar.find(event => event.name === ctx.message);
+    const selectedEvent = futureCalendar.find(event => event.summary === ctx.message);
     if (selectedEvent) {
-        Reply.text(getEventText(selectedEvent, true));
+        return Reply.text(getEventText(selectedEvent, true));
     } else {
-        Reply.text(Responses.dont_know);
+        return Reply.text(Responses.dont_know);
     }
 })
 //alice.command(/(https?:\/\/[^\s]+)/g, ctx => Reply.text('Это ссылка!'));
