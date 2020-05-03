@@ -67,10 +67,10 @@ alice.command(['В начало', 'меню'], async ctx => {
 alice.command(['Помощь', 'Что ты умеешь', 'Что умеешь', 'что ты умеешь?'], async ctx =>
     Reply.text(Responses.help)
 );
-alice.command(['Выход', 'покинуть', 'хватит', 'закрыть', 'выключить'], async ctx => {
+/*alice.command(['Выход', 'покинуть', 'хватит', 'закрыть', 'выключить'], async ctx => {
     сtx.leave();
     return Reply.text(Responses.exit);
-});
+});*/
 alice.command(['ближайшее событие', 'ближайшее', 'события'], async ctx => {
     const events = futureCalendar;
     let out = '';
