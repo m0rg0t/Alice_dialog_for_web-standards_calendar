@@ -1,13 +1,15 @@
 'use strict';
 
-//const { json } = require('micro');
-const { Alice, Reply, Markup } = require('yandex-dialogs-sdk');
+require('dayjs/locale/ru');
+const { Alice, Reply, Markup, Stage } = require('yandex-dialogs-sdk');
 const Responses = require('./strings/strings.js');
 const dayjs = require('dayjs');
-require('dayjs/locale/ru');
 const app = require('express')();
 const bodyParser = require('body-parser');
 const alice = new Alice();
+const stage = new Stage();
+
+dayjs.locale('ru');
 const EVENTS_COUNT = 4;
 const PORT = process.env.PORT || 3001;
 
@@ -15,7 +17,7 @@ const fs = require('fs');
 
 let rawdata = fs.readFileSync('./data/calendar.json');
 let calendar = JSON.parse(rawdata);
-dayjs.locale('ru');
+
 const DateFormatString = 'DD MMMM YYYY года HH часов mm минут';
 
 /***** sort events by date ******/
@@ -50,17 +52,18 @@ app.use(function (req, res, next) {
 });
 
 const M = Markup;
+const menuButtons = [M.button('Ближайшие события'), M.button('В этом месяце'), M.button('В следующем месяце')];
 alice.command('', async ctx => {
     return {
         text: Responses.hello,
-        buttons: [M.button('Ближайшие события')]
+        buttons: menuButtons
     }
 }
 );
 alice.command(['В начало', 'меню'], async ctx => {
     return {
         text: Responses.hello,
-        buttons: [M.button('Ближайшие события')]
+        buttons: menuButtons
     }
 }
 );
@@ -87,8 +90,54 @@ alice.command(['ближайшее событие', 'ближайшее', 'со�
         text: out,
         buttons: buttons
     }
-}
-);
+});
+
+alice.command(['в этом месяце', 'этот месяц'], async ctx => {
+    let now = dayjs();
+    let monthStart = dayjs().startOf('month');
+    let monthEnd = dayjs().endOf('month');
+    const events = calendar.filter((event) => dayjs(event.start) >= monthStart && dayjs(event.start) <= monthEnd);
+    let out = '';
+    let buttons = [];
+    for (let i = 0; i < (EVENTS_COUNT > events.length ? events.length : EVENTS_COUNT); i++) {
+        const event = events[i];
+        out += getEventText(event) + "\n\n";
+        buttons.push(M.button({
+            title: event.summary,
+            url: event.description
+        }));
+    }
+    return {
+        text: out,
+        buttons: buttons
+    }
+});
+
+/**
+ * TODO
+ * Add common function to show list of events and to get events for specified date or date interval
+ */
+alice.command(['в следующем месяце', 'следующий месяц'], async ctx => {
+    let now = dayjs();
+    let monthStart = dayjs().add(1, "month").startOf('month');
+    let monthEnd = dayjs().add(1, "month").endOf('month');
+    const events = calendar.filter((event) => dayjs(event.start) >= monthStart && dayjs(event.start) <= monthEnd);
+    let out = '';
+    let buttons = [];
+    for (let i = 0; i < (EVENTS_COUNT > events.length ? events.length : EVENTS_COUNT); i++) {
+        const event = events[i];
+        out += getEventText(event) + "\n\n";
+        buttons.push(M.button({
+            title: event.summary,
+            url: event.description
+        }));
+    }
+    return {
+        text: out,
+        buttons: buttons
+    }
+});
+
 alice.command(eventNames, ctx => {
     const selectedEvent = futureCalendar.find(event => event.summary === ctx.message);
     if (selectedEvent) {

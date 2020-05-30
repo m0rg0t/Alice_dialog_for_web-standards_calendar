@@ -4606,12 +4606,19 @@
         "description": "https://medium.com/p/cf7cb666834a"
     },
     {
-        "uid": "2020-05-25-frontendconf-rit-moscow",
+        "uid": "2020-05-23-online-pub",
+        "start": "2020-05-23T08:30:00.000Z",
+        "end": "2020-05-23T16:00:00.000Z",
+        "summary": "Онлайн-паб (онлайн)",
+        "location": "Ростов-на-Дону",
+        "description": "https://rndtech.pro/online-pub"
+    },
+    {
+        "uid": "2020-05-25-codebattle-pro",
         "start": "2020-05-25T00:00:00.000Z",
-        "end": "2020-05-27T00:00:00.000Z",
-        "summary": "FrontendConf Moscow (RIT++) (онлайн)",
-        "location": "Москва",
-        "description": "https://ritfest.ru/2020",
+        "end": "2020-05-26T00:00:00.000Z",
+        "summary": "CodeBattle Pro (онлайн)",
+        "description": "https://community-z.com/events/codebattle-pro",
         "allDay": true
     },
     {
@@ -4632,6 +4639,23 @@
         "allDay": true
     },
     {
+        "uid": "2020-05-25-rit",
+        "start": "2020-05-25T00:00:00.000Z",
+        "end": "2020-05-27T00:00:00.000Z",
+        "summary": "РИТ++ (онлайн)",
+        "location": "Москва",
+        "description": "https://ritfest.ru/2020",
+        "allDay": true
+    },
+    {
+        "uid": "2020-05-25-ruvds-live",
+        "start": "2020-05-25T17:00:00.000Z",
+        "end": "2020-05-25T18:00:00.000Z",
+        "summary": "Лайв с Натальей Теплухиной (онлайн)",
+        "location": "Москва",
+        "description": "https://www.instagram.com/p/B_VS8NTq0Fw/"
+    },
+    {
         "uid": "2020-05-27-jamstack-conf",
         "start": "2020-05-27T13:00:00.000Z",
         "end": "2020-05-27T20:00:00.000Z",
@@ -4648,15 +4672,6 @@
         "description": "https://minskjs.timepad.ru/event/1311291/"
     },
     {
-        "uid": "2020-06-16-holyjs-piter",
-        "start": "2020-06-16T00:00:00.000Z",
-        "end": "2020-06-18T00:00:00.000Z",
-        "summary": "HolyJS Piter",
-        "location": "Санкт-Петербург",
-        "description": "https://holyjs-piter.ru/",
-        "allDay": true
-    },
-    {
         "uid": "2020-06-17-accessibility-club-minsk-meetup",
         "start": "2020-06-17T15:30:00.000Z",
         "end": "2020-06-17T18:30:00.000Z",
@@ -4671,6 +4686,24 @@
         "summary": "JSNation Live (онлайн)",
         "location": "Amsterdam",
         "description": "https://live.jsnation.com/",
+        "allDay": true
+    },
+    {
+        "uid": "2020-06-22-holyjs-piter",
+        "start": "2020-06-22T00:00:00.000Z",
+        "end": "2020-06-26T00:00:00.000Z",
+        "summary": "HolyJS Piter (онлайн)",
+        "location": "Санкт-Петербург",
+        "description": "https://holyjs-piter.ru/",
+        "allDay": true
+    },
+    {
+        "uid": "2020-06-30-webdev-live",
+        "start": "2020-06-30T00:00:00.000Z",
+        "end": "2020-07-03T00:00:00.000Z",
+        "summary": "Web.dev Live (онлайн)",
+        "location": "Москва",
+        "description": "https://web.dev/live",
         "allDay": true
     },
     {
