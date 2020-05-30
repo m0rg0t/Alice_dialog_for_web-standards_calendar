@@ -75,7 +75,7 @@ alice.command(['Помощь', 'Что ты умеешь', 'Что умеешь'
     return Reply.text(Responses.exit);
 });*/
 alice.command(['ближайшее событие', 'ближайшее', 'события'], async ctx => {
-    const events = futureCalendar;
+    const events = futureCalendar.filter((event) => dayjs(event.start) >= dayjs());
     let out = '';
     let buttons = [];
     for (let i = 0; i < (EVENTS_COUNT > events.length ? events.length : EVENTS_COUNT); i++) {
