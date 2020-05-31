@@ -45,21 +45,47 @@ const getEventText = (event, fullData = false) => {
     return eventText;
 }
 
+const M = Markup;
+const menuButtons = [M.button('Ближайшие события'), M.button('В этом месяце'), M.button('В следующем месяце')];
+
+/**
+ * 
+ * @param {array} events list of events we need to show
+ * @param {object} options 
+ */
+const showEvents = (events = [], options = {
+    limit: EVENTS_COUNT,
+    filter: null
+}) => {
+    let text = '';
+    let buttons = [];
+    for (let i = 0; i < (options.limit > events.length ? events.length : options.limit); i++) {
+        const event = events[i];
+        text += getEventText(event) + "\n\n";
+        buttons.push(M.button({
+            title: event.summary,
+            url: event.description
+        }));
+    }
+    return {
+        text,
+        buttons
+    }
+};
+
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
 
-const M = Markup;
-const menuButtons = [M.button('Ближайшие события'), M.button('В этом месяце'), M.button('В следующем месяце')];
 alice.command('', async ctx => {
     return {
         text: Responses.hello,
         buttons: menuButtons
     }
-}
-);
+});
+
 alice.command(['В начало', 'меню'], async ctx => {
     return {
         text: Responses.hello,
@@ -70,47 +96,18 @@ alice.command(['В начало', 'меню'], async ctx => {
 alice.command(['Помощь', 'Что ты умеешь', 'Что умеешь', 'что ты умеешь?'], async ctx =>
     Reply.text(Responses.help)
 );
-/*alice.command(['Выход', 'покинуть', 'хватит', 'закрыть', 'выключить'], async ctx => {
-    сtx.leave();
-    return Reply.text(Responses.exit);
-});*/
+
 alice.command(['ближайшее событие', 'ближайшее', 'события'], async ctx => {
     const events = futureCalendar.filter((event) => dayjs(event.start) >= dayjs());
-    let out = '';
-    let buttons = [];
-    for (let i = 0; i < (EVENTS_COUNT > events.length ? events.length : EVENTS_COUNT); i++) {
-        const event = events[i];
-        out += getEventText(event) + "\n\n";
-        buttons.push(M.button({
-            title: event.summary,
-            url: event.description
-        }));
-    }
-    return {
-        text: out,
-        buttons: buttons
-    }
+    return showEvents(events, { limit: EVENTS_COUNT });
 });
 
 alice.command(['в этом месяце', 'этот месяц'], async ctx => {
-    let now = dayjs();
     let monthStart = dayjs().startOf('month');
     let monthEnd = dayjs().endOf('month');
     const events = calendar.filter((event) => dayjs(event.start) >= monthStart && dayjs(event.start) <= monthEnd);
-    let out = '';
-    let buttons = [];
-    for (let i = 0; i < (EVENTS_COUNT > events.length ? events.length : EVENTS_COUNT); i++) {
-        const event = events[i];
-        out += getEventText(event) + "\n\n";
-        buttons.push(M.button({
-            title: event.summary,
-            url: event.description
-        }));
-    }
-    return {
-        text: out,
-        buttons: buttons
-    }
+    
+    return showEvents(events, { limit: EVENTS_COUNT });
 });
 
 /**
@@ -122,20 +119,7 @@ alice.command(['в следующем месяце', 'следующий мес�
     let monthStart = dayjs().add(1, "month").startOf('month');
     let monthEnd = dayjs().add(1, "month").endOf('month');
     const events = calendar.filter((event) => dayjs(event.start) >= monthStart && dayjs(event.start) <= monthEnd);
-    let out = '';
-    let buttons = [];
-    for (let i = 0; i < (EVENTS_COUNT > events.length ? events.length : EVENTS_COUNT); i++) {
-        const event = events[i];
-        out += getEventText(event) + "\n\n";
-        buttons.push(M.button({
-            title: event.summary,
-            url: event.description
-        }));
-    }
-    return {
-        text: out,
-        buttons: buttons
-    }
+    return showEvents(events, { limit: EVENTS_COUNT });
 });
 
 alice.command(eventNames, ctx => {
